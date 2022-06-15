@@ -1,5 +1,6 @@
 package Member;
 
+// this class holds all necessary information about a member
 public class MemberAccount {
 
     private final Long id;
@@ -7,7 +8,9 @@ public class MemberAccount {
     private String surname;
     private double balance;
     private String phoneNumber;
-    private String code;
+
+
+    // All args constructor
 
     public MemberAccount(Long id, String name, String surname, double balance, String phoneNumber) {
         this.id = id;
@@ -15,8 +18,9 @@ public class MemberAccount {
         this.surname = surname;
         this.balance = balance;
         this.phoneNumber = phoneNumber;
-        formCode();
     }
+
+    // Setters & Getters
 
     public Long getId() {
         return id;
@@ -42,7 +46,7 @@ public class MemberAccount {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(double balance){
         this.balance = balance;
     }
 
@@ -55,19 +59,6 @@ public class MemberAccount {
     }
 
     public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    // Forms the code of account
-    private void formCode(){
-        StringBuilder code = new StringBuilder(String.valueOf(this.id));
-        for(int i = 0; i < 2; i++){
-            code.append(this.name.charAt(i));
-        }
-        this.code = code.toString();
+        return this.id + this.name.substring(0,2);
     }
 }

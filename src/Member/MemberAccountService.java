@@ -1,9 +1,12 @@
 package Member;
 
+import CustomExceptions.MemberNotFoundException;
+import Queries.Query;
+
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
+//This class conducts the necessary operations belonging to MemberAccount class
 public class MemberAccountService {
 
     private List<MemberAccount> members = new LinkedList<>();
@@ -12,30 +15,59 @@ public class MemberAccountService {
         return members;
     }
 
-    public Optional<MemberAccount> readOneMemberByCode(String memberCode){
-        return members.stream().filter(member -> member.getCode().equals(memberCode)).findFirst();
-    }
-
-    public MemberAccount createAcoount(Long id, String name, String surname, double balance, String phoneNumber){
-        return new MemberAccount(id, name, surname, balance, phoneNumber);
-    }
-
-    public MemberAccount updateAccount(String memberCode, double balance, String phoneNumber){
-        Optional<MemberAccount> memberToUpdate = members.stream().filter(member -> member.getCode().equals(memberCode)).findFirst();
-        if(memberToUpdate.isPresent()){
-            MemberAccount member = memberToUpdate.get();
-            member.setBalance(balance);
-            member.setPhoneNumber(phoneNumber);
-            return member;
+    /**
+     * Queries for the member with given member code
+     * @param memberCode the unique string for each member
+     * @return the member with given memborcode if exists, null otherwise
+     */
+    public MemberAccount readOneMemberByCode(String memberCode){
+        try {
+            return Query.queryMember(memberCode, members);
+        } catch (MemberNotFoundException e) {
+            e.getMessage();
         }
         return null;
     }
 
+    /**
+     * Takes a member as a parameter, and adds it to list
+     * @param memberAccount the member account to be added to member-list
+     * @return the member created
+     */
+    public MemberAccount createAcoount(MemberAccount memberAccount){
+        members.add(memberAccount);
+        return memberAccount;
+    }
+
+    /**
+     * Queries for the member with given member code, then updates features according to given parameters
+     * @param memberCode the unique string for each member
+     * @return the member with given memborcode and updated values if exists, null otherwise
+     */
+    public MemberAccount updateAccount(String memberCode, double balance, String phoneNumber){
+        try{
+            MemberAccount memberToUpdate = Query.queryMember(memberCode, members);
+            memberToUpdate.setBalance(balance);
+            memberToUpdate.setPhoneNumber(phoneNumber);
+            return memberToUpdate;
+        }catch(MemberNotFoundException e){
+            e.getMessage();
+        }
+        return null;
+    }
+
+    /**
+     * Queries for the member with given member code and removes it from the list
+     * @param memberCode the unique string for each member
+     * @return the member-to-delete with given memborcode if exists, null otherwise
+     */
     public MemberAccount deleteAccount(String memberCode){
-        Optional<MemberAccount> memberTodelete = members.stream().filter(member -> member.getCode().equals(memberCode)).findFirst();
-        if(memberTodelete.isPresent()){
-            members.remove(memberTodelete.get());
-            return memberTodelete.get();
+        try{
+            MemberAccount memberTodelete = Query.queryMember(memberCode, members);
+            members.remove(memberTodelete);
+            return memberTodelete;
+        }catch (MemberNotFoundException e){
+            e.getMessage();
         }
         return null;
     }
